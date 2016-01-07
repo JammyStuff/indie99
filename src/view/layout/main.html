@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+    <title>{{ title }} — indie99</title>
+    {% else %}
+    <title>indie99</title>
+    {% endif %}
+</head>
+<body>
+{% block content %}{% endblock %}
+</body>
+</html>

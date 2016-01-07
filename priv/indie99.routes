@@ -21,3 +21,6 @@
 
 % 500 Internal Error handler (only invoked in production)
 % {500, [{controller, "world"}, {action, "calamity"}]}.
+
+{"/login", [{controller, "session"}, {action, "login"}]}.
+{"/logout", [{controller, "session"}, {action, "logout"}]}.
