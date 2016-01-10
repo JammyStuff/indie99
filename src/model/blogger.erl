@@ -2,6 +2,8 @@
                   CreatedAt::datetime(), UpdatedAt::datetime()]).
 -export([before_update/0, check_password/1, set_password/1]).
 
+-has({posts, many}).
+
 check_password(Password) ->
     {ok, PasswordHash} =:= bcrypt:hashpw(Password, PasswordHash).
 
