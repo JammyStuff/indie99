@@ -27,9 +27,6 @@ login('POST', [], RequestContext) ->
             end
     end.
 
-logout('GET', []) ->
-    ok;
-
 logout('POST', []) ->
     boss_session:remove_session_data(SessionID, blogger),
     {redirect, "/"}.
