@@ -1,14 +1,8 @@
 -module(blogger_lib).
 -export([is_logged_in/1, register/2]).
 
-is_logged_in(SessionID) ->
-    UserID = boss_session:get_session_data(SessionID, user),
-    case boss_db:find(UserID) of
-        {error, _} ->
-            false;
-        User ->
-            User =/= undefined
-    end.
+is_logged_in(RequestContext) ->
+    proplists:get_value(blogger, RequestContext) =/= undefined.
 
 register(Username, Password) ->
     Time = erlang:universaltime(),
