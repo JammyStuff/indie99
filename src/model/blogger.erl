@@ -9,9 +9,15 @@ check_password(Password) ->
     {ok, PasswordHash} =:= bcrypt:hashpw(Password, PasswordHash).
 
 set_password(Password) ->
-    {ok, Salt} = bcrypt:gen_salt(),
-    {ok, Hash} = bcrypt:hashpw(Password, Salt),
-    set(password_hash, Hash).
+    if
+        length(Password) < 6 ->
+            {error, ["Password must be at least 6 characters long"]};
+        true ->
+            {ok, Salt} = bcrypt:gen_salt(),
+            {ok, Hash} = bcrypt:hashpw(Password, Salt),
+            Blogger = set(password_hash, Hash),
+            {ok, Blogger}
+    end.
 
 before_create() ->
     Time = erlang:universaltime(),

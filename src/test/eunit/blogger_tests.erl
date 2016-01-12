@@ -19,11 +19,13 @@ fun_check_password() ->
 fun_set_password() ->
     OrigBlogger = create_blogger(),
     Password = "anewtestpass123",
-    NewBlogger = OrigBlogger:set_password(Password),
+    {ok, NewBlogger} = OrigBlogger:set_password(Password),
     ?assertNotEqual(OrigBlogger:password_hash(), NewBlogger:password_hash()),
     ?assertNotEqual(undefined, NewBlogger:password_hash()),
     ?assertNotEqual(Password, NewBlogger:password_hash()),
-    ?assertEqual(60, length(NewBlogger:password_hash())).
+    ?assertEqual(60, length(NewBlogger:password_hash())),
+    ?assertEqual({error, ["Password must be at least 6 characters long"]},
+                 OrigBlogger:set_password("abcde")).
 
 val_username() ->
     TooShortBlogger = create_blogger([{username, ""}]),
@@ -37,7 +39,7 @@ val_username() ->
     lists:foreach(fun(B) -> boss_db:delete(B:id()) end, Bloggers),
     DuplicateBlogger = create_blogger([{username, "Username"}]),
     ?assertMatch({ok, _}, DuplicateBlogger:save()),
-    ?assertMatch({error, ["Username already taken"]},
+    ?assertEqual({error, ["Username already taken"]},
                  DuplicateBlogger:validate()).
 
 create_blogger() ->
