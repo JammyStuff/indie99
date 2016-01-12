@@ -1,0 +1,42 @@
+{% extends "layout/main.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Welcome to indie99! <small>Let's get started...</small></h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Tell us about yourself. <small>We won't bite, honest.</small></h3>
+    </div>
+</div>
+
+<form method="post">
+    {% if form_errors %}
+    {% for error in form_errors %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {{ csrf_token|safe }}
+    <div class="form-group">
+        What would you like to be called? This will be your <label for="username-box">username</label>.
+        <input type="text" class="form-control" id="username-box" placeholder="Username" name="username">
+    </div>
+    <div class="form-group">
+        To keep your account secure, you'll need to set a password. What would you like your <label for="password-box">password</label> to be?
+        <input type="password" class="form-control" id="password-box" placeholder="Password" name="password">
+    </div>
+    <div class="form-group">
+        Give us that password one more time, just to <label for="password-confirmation-box">confirm</label>.
+        <input type="password" class="form-control" id="password-confirmartion-box" placeholder="Password confirmation" name="password_confirmation">
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-default">I'm ready!</button>
+    </div>
+</form>
+{% endblock %}
