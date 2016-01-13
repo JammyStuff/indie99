@@ -1,4 +1,5 @@
 -module(blogger_tests).
+-export([create_blogger/0, create_blogger/1]).
 -include_lib("eunit/include/eunit.hrl").
 
 blogger_test_() ->
