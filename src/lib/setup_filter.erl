@@ -6,5 +6,5 @@ before_filter(_FilterConfig, RequestContext) ->
         0 ->
             {redirect, "/setup/step1"};
         _ ->
-            ok
+            {ok, RequestContext}
     end.
