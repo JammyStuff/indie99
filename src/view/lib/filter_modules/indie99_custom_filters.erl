@@ -7,3 +7,7 @@
 %     lists:reverse(binary_to_list(Value)).
 %
 % "foo"|my_reverse   => "oof"
+
+as_id(Value) ->
+    [_, Id] = string:tokens(Value, "-"),
+    Id.

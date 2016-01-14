@@ -1,0 +1,22 @@
+{% extends "layout/main.html" %}
+
+{% block content %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Posted At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for post in posts %}
+        <tr>
+            <th scope="row"><a href="/admin/posts/{{ post.id }}">{{ post.id|as_id }}</a></th>
+            <td><a href="/admin/posts/{{ post.id }}">{{ post.title }}</a></td>
+            <td><a href="/admin/posts/{{ post.id }}">{{ post.published_at|date:"l j F Y H:i" }}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
