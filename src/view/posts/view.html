@@ -1,0 +1,17 @@
+{% extends "layout/main.html" %}
+
+{% block content %}
+<article>
+    <header class="row">
+        <div class="col-md-12">
+            <h1>{{ post.title }}</h1>
+            <h3><small>Posted by {{ post.blogger.username }} | {{ post.published_at|date:"l j F Y H:i" }}</small></h3>
+        </div>
+    </header>
+    <div class="row">
+        <div class="col-md-12">
+            {{ post.content|indiecode|safe }}
+        </div>
+    </div>
+</article>
+{% endblock %}

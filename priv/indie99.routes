@@ -24,3 +24,4 @@
 
 {"/login", [{controller, "session"}, {action, "login"}]}.
 {"/logout", [{controller, "session"}, {action, "logout"}]}.
+{"/p/(?<post_slug>[-a-z0-9]+)", [{controller, "posts"}, {action, "view"}, {post_slug, '$post_slug'}]}.
