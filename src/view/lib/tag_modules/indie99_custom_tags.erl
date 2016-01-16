@@ -9,3 +9,7 @@
 % {% reverse string="hello" %} => "olleh"
 %
 % Variables are the passed-in vars in your template
+
+site_name(_Variables) ->
+    {ok, Name} = application:get_env(indie99, site_name),
+    Name.

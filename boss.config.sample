@@ -400,6 +400,12 @@
 %    {static_prefix, "/static"},
 %    {doc_prefix, "/doc"},
 
-    {dummy, true}
+    {dummy, true},
+
+
+%% INDIE99 CONFIGURATION
+
+    %% site_name - The name of the site (used for branding)
+    {site_name, "indie99"}
 ]}
 ].
