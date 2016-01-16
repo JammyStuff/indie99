@@ -20,7 +20,7 @@
 % {404, [{controller, "world"}, {action, "lost"}]}.
 
 % 500 Internal Error handler (only invoked in production)
-% {500, [{controller, "world"}, {action, "calamity"}]}.
+{500, [{controller, "error"}, {action, "error_500"}]}.
 
 {"/", [{controller, "posts"}, {action, "index"}]}.
 {"/login", [{controller, "session"}, {action, "login"}]}.
