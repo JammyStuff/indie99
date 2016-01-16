@@ -1,5 +1,6 @@
 -module(post, [Id, Title::string(), Content::string(), Slug::string(),
-               BloggerId, CreatedAt::datetime(), UpdatedAt::datetime()]).
+               BloggerId, PublishedAt::datetime(), CreatedAt::datetime(),
+               UpdatedAt::datetime()]).
 -export([before_create/0, before_update/0, generate_slug/0,
          validation_tests/0]).
 

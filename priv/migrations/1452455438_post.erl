@@ -7,6 +7,7 @@ UpSQL = "
         content TEXT,
         slug VARCHAR(150) NOT NULL UNIQUE,
         blogger_id INTEGER NOT NULL REFERENCES bloggers ON DELETE CASCADE ON UPDATE CASCADE,
+        published_at TIMESTAMP WITH TIME ZONE,
         created_at TIMESTAMP WITH TIME ZONE NOT NULL,
         updated_at TIMESTAMP WITH TIME ZONE NOT NULL
     );

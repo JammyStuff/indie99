@@ -45,7 +45,7 @@ val_title() ->
 create_post(Blogger) ->
     Post = post:new(id, "Test post please ignore", "This is a test post. It " ++
                     "can be used in eunit tests.", undefined, undefined,
-                    undefined, undefined),
+                    undefined, undefined, undefined),
     case Blogger of
         undefined ->
             Post;
