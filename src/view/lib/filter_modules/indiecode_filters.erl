@@ -1,6 +1,13 @@
 -module(indiecode_filters).
 -export([indiecode/1]).
 
+auto_a(Content) ->
+    % This is a really bad regex, only works for http(s) and catches things that
+    % aren't actually URLs. We should write a proper RFC 3986 compliant regex at
+    % some point.
+    re:replace(Content, "https?://\\S+", "<a href=\"&\">&</a>",
+               [global, {return, list}]).
+
 escape_amp(Content) ->
     re:replace(Content, "&", "\\&amp;", [global, {return, list}]).
 
@@ -27,4 +34,5 @@ indiecode(Value) ->
     GtEscaped = escape_gt(LtEscaped),
     QuotEscaped = escape_quot(GtEscaped),
     AposEscaped = escape_apos(QuotEscaped),
-    insert_p(AposEscaped).
+    AutoLinked = auto_a(AposEscaped),
+    insert_p(AutoLinked).
