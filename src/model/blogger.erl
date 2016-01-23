@@ -4,6 +4,7 @@
          validation_tests/0]).
 
 -has({posts, many}).
+-has({twitter_token, 1}).
 
 check_password(Password) ->
     {ok, PasswordHash} =:= bcrypt:hashpw(Password, PasswordHash).
