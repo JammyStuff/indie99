@@ -406,6 +406,7 @@
 %% INDIE99 CONFIGURATION
 
     %% site_name - The name of the site (used for branding)
-    {site_name, "indie99"}
+    {site_name, "indie99"},
+    {twitter_credentials, {"TWITTER_KEY", "TWITTER_SECRET"}}
 ]}
 ].

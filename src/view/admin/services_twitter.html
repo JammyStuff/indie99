@@ -1,0 +1,30 @@
+{% extends "layout/main.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-9">
+        <h1>Connect to Twitter</h1>
+        <p>By connecting to Twitter, you'll be able to:</p>
+        <ul>
+            <li>Tweet about posts you make</li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        {% if twitter_connected %}
+        <form action="/admin/services/twitter/disconnect" method="post">
+            {{ csrf_token|safe }}
+            <div class="form-group">
+                <button type="submit" class="btn btn-danger">Disconnect from Twitter</button>
+            </div>
+        </form>
+        {% else %}
+        <form method="post">
+            {{ csrf_token|safe }}
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Connect to Twitter</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

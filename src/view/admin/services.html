@@ -1,0 +1,19 @@
+{% extends "layout/main.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Manage Services</h1>
+        <p>Here you can manage your connection to third party services. Connecting to third party services allows you to do things such as post about your blog posts to social media.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 text-center">
+        {% if twitter_enabled %}
+        <a class="btn btn-default" href="/admin/services/twitter"><span class="fa fa-twitter"></span> Twitter</a>
+        {% else %}
+        <a class="btn btn-default" disabled="disabled"><span class="fa fa-twitter"></span> Twitter</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
