@@ -6,8 +6,13 @@ posts('GET', [], _RequestContext) ->
                                [{order_by, created_at}, {descending, true}]),
     {ok, [{title, "Posts Admin"}, {posts, Posts}]};
 
-posts('GET', ["create"], _RequestContext) ->
-    {render_other, [{action, "posts_create"}], [{title, "Create Post"}]};
+posts('GET', ["create"], RequestContext) ->
+    Blogger = proplists:get_value(blogger, RequestContext),
+    TwitterIsConnected = (twitter_client:is_enabled()) and
+        (Blogger:twitter_token() =/= undefined),
+    {render_other, [{action, "posts_create"}],
+        [{title, "Create Post"},
+         {twitter_is_connected, TwitterIsConnected}]};
 
 posts('POST', ["create"], RequestContext) ->
     Blogger = proplists:get_value(blogger, RequestContext),
@@ -21,6 +26,21 @@ posts('POST', ["create"], RequestContext) ->
                            [{title, "Create Post"}, {form_errors, Errors}]};
         ok ->
             {ok, SavedPost} = Post:save(),
+            PostUrl = io_lib:format("~s://~s/p/~s", [Req:protocol(),
+                Req:header(host), SavedPost:slug()]),
+            case Req:post_param("twitter") of
+                "twitter" ->
+                    %% Post to twitter
+                    TwitterToken = Blogger:twitter_token(),
+                    TwitterStatus = io_lib:format("~s ~s", [SavedPost:title(),
+                        PostUrl]),
+                    twitter_client:post_status_update(
+                        twitter_client:get_credentials(),
+                        {TwitterToken:token(), TwitterToken:token_secret()},
+                        TwitterStatus);
+                _ ->
+                    ok
+            end,
             {redirect, io_lib:format("/p/~s", [SavedPost:slug()])}
     end;
 

@@ -20,6 +20,16 @@
         <textarea class="form-control" id="content-box" placeholder="Content" name="content"></textarea>
     </div>
     <div class="form-group">
+        <strong>Post to social networks</strong><br>
+        <label class="checkbox-inline">
+            {% if twitter_is_connected %}
+            <input type="checkbox" id="twitter-checkbox" name="twitter" value="twitter"><span class="fa fa-twitter"></span> Twitter
+            {% else %}
+            <input type="checkbox" id="twitter-checkbox" name="twitter" value="twitter" disabled><span class="fa fa-twitter"></span> Twitter
+            {% endif %}
+        </label>
+    </div>
+    <div class="form-group">
         <button type="submit" class="btn btn-primary">Post</button>
     </div>
 </form>
