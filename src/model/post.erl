@@ -1,5 +1,6 @@
 -module(post, [Id, Title::string(), Content::string(), Slug::string(),
-               BloggerId, PublishedAt::datetime(), CreatedAt::datetime(),
+               TwitterStatusId::string(), TwitterUsername::string(), BloggerId,
+               PublishedAt::datetime(), CreatedAt::datetime(),
                UpdatedAt::datetime()]).
 -export([before_create/0, before_update/0, generate_slug/0,
          validation_tests/0]).
@@ -40,5 +41,14 @@ validation_tests() ->
         {fun() ->
             (length(Title) >= 1) and (length(Title) =< 116)
          end,
-         "Title must be between 1 and 116 characters long"}
+         "Title must be between 1 and 116 characters long"},
+        {fun() ->
+            if
+                is_list(TwitterUsername) ->
+                    length(TwitterUsername) =< 15;
+                true ->
+                    true
+            end
+         end,
+         "Twitter Username can be up to 15 characters long"}
     ].

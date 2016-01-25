@@ -18,8 +18,8 @@ posts('POST', ["create"], RequestContext) ->
     Blogger = proplists:get_value(blogger, RequestContext),
     Title = Req:post_param("title"),
     Content = Req:post_param("content"),
-    Post = post:new(id, Title, Content, undefined, Blogger:id(),
-                    erlang:universaltime(), undefined, undefined),
+    Post = post:new(id, Title, Content, undefined, undefined, undefined,
+                    Blogger:id(), erlang:universaltime(), undefined, undefined),
     case Post:validate() of
         {error, Errors} ->
             {render_other, [{action, "posts_create"}],
@@ -34,10 +34,15 @@ posts('POST', ["create"], RequestContext) ->
                     TwitterToken = Blogger:twitter_token(),
                     TwitterStatus = io_lib:format("~s ~s", [SavedPost:title(),
                         PostUrl]),
-                    twitter_client:post_status_update(
-                        twitter_client:get_credentials(),
-                        {TwitterToken:token(), TwitterToken:token_secret()},
-                        TwitterStatus);
+                    {TwitterStatusId, TwitterUsername} =
+                        twitter_client:post_status_update(
+                            twitter_client:get_credentials(),
+                            {TwitterToken:token(), TwitterToken:token_secret()},
+                            TwitterStatus),
+                    TweetedPost = SavedPost:set([
+                        {twitter_status_id, TwitterStatusId},
+                        {twitter_username, TwitterUsername}]),
+                    {ok, _} = TweetedPost:save();
                 _ ->
                     ok
             end,

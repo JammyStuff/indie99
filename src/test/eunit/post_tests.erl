@@ -8,7 +8,9 @@ post_test_() ->
         {"Post without content",
          ?_test(no_content())},
         {"Validations for title",
-         ?_test(val_title())}
+         ?_test(val_title())},
+        {"Validations for twitter username",
+         ?_test(val_twitter_username())}
     ].
 
 fun_generate_slug() ->
@@ -42,10 +44,18 @@ val_title() ->
     ?assertEqual({error, ["Title must be between 1 and 116 characters long"]},
                  TooLongPost:validate()).
 
+val_twitter_username() ->
+    OkPost = create_post(undefined, [{twitter_username, "TwitterUsername"}]),
+    ?assertEqual(ok, OkPost:validate()),
+    TooLongPost = create_post(undefined,
+                              [{twitter_username, "TwitterUsername1"}]),
+    ?assertEqual({error, ["Twitter Username can be up to 15 characters long"]},
+                 TooLongPost:validate()).
+
 create_post(Blogger) ->
     Post = post:new(id, "Test post please ignore", "This is a test post. It " ++
                     "can be used in eunit tests.", undefined, undefined,
-                    undefined, undefined, undefined),
+                    undefined, undefined, undefined, undefined, undefined),
     case Blogger of
         undefined ->
             Post;

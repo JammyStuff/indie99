@@ -6,7 +6,7 @@
     <header class="row">
         <div class="col-md-12">
             <h1><a href="/p/{{ post.slug }}">{{ post.title }}</a></h1>
-            <h3><small>Posted by {{ post.blogger.username }} | {{ post.published_at|date:"l j F Y H:i" }}</small></h3>
+            <h3><small>Posted by {{ post.blogger.username }} | {{ post.published_at|date:"l j F Y H:i" }}{% if post.twitter_status_id %} | <a href="https://twitter.com/{{ post.twitter_username }}/status/{{ post.twitter_status_id }}"><span class="fa fa-twitter"></span></a>{% endif %}</small></h3>
         </div>
     </header>
     <div class="row">

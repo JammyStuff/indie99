@@ -9,10 +9,16 @@ UpSQL = "
         created_at TIMESTAMP WITH TIME ZONE NOT NULL,
         updated_at TIMESTAMP WITH TIME ZONE NOT NULL
     );
+    ALTER TABLE posts
+        ADD COLUMN twitter_status_id TEXT,
+        ADD COLUMN twitter_username VARCHAR(15);
 ".
 
 DownSQL = "
     DROP TABLE twitter_tokens;
+    ALTER TABLE posts
+        DROP COLUMN IF EXISTS twitter_status_id,
+        DROP COLUMN IF EXISTS twitter_username;
 ".
 
 {twitter_token,

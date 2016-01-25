@@ -39,4 +39,9 @@ post_status_update(Credentials, {AccessToken, AccessTokenSecret}, Status) ->
     FlatStatus = lists:flatten(Status),
     {ok, Response} = oauth:post(?STATUS_UPDATE_URL, [{"status", FlatStatus}],
         Credentials, AccessToken, AccessTokenSecret),
-    error_logger:info_msg("~w", Response).
+    {_, _, Body} = Response,
+    {DecodedResponse} = jiffy:decode(Body),
+    StatusId = proplists:get_value(<<"id_str">>, DecodedResponse),
+    {User} = proplists:get_value(<<"user">>, DecodedResponse),
+    Username = proplists:get_value(<<"screen_name">>, User),
+    {binary_to_list(StatusId), binary_to_list(Username)}.
