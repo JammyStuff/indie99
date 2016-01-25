@@ -10,7 +10,7 @@
     </header>
     <div class="row">
         <div class="col-md-12">
-            {{ post.content|indiecode|safe }}
+            {{ post.content|markdown|safe }}
         </div>
     </div>
 </article>

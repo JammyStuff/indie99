@@ -11,3 +11,6 @@
 as_id(Value) ->
     [_, Id] = string:tokens(Value, "-"),
     Id.
+
+markdown(Value) ->
+    markdown:conv_utf8(Value).
