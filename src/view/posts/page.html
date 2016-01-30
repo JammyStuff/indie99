@@ -17,4 +17,19 @@
 </article>
 <hr>
 {% endfor %}
+
+<nav>
+    <ul class="pager">
+        {% if previous_page %}
+        <li class="previous "><a href="/posts/page/{{ previous_page }}"><span aria-hidden="true">&larr;</span>Newer</a></li>
+        {% else %}
+        <li class="previous disabled"><a><span aria-hidden="true">&larr;</span>Newer</a></li>
+        {% endif %}
+        {% if next_page %}
+        <li class="next"><a href="/posts/page/{{ next_page }}">Older<span aria-hidden="true">&rarr;</span></a></li>
+        {% else %}
+        <li class="next disabled"><a>Older<span aria-hidden="true">&rarr;</span></a></li>
+        {% endif %}
+    </ul>
+</nav>
 {% endblock %}
