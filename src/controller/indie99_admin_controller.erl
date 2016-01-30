@@ -1,10 +1,10 @@
 -module(indie99_admin_controller, [Req, SessionID]).
 -export([before_filters/2, posts/3, services/3]).
 
+-define(POSTS_PER_PAGE, 10).
+
 posts('GET', [], _RequestContext) ->
-    Posts = boss_db:find(post, [],
-                               [{order_by, created_at}, {descending, true}]),
-    {ok, [{title, "Posts Admin"}, {posts, Posts}]};
+    {action_other, [{action, "posts"}, {page_number_str, "1"}]};
 
 posts('GET', ["create"], RequestContext) ->
     Blogger = proplists:get_value(blogger, RequestContext),
@@ -48,6 +48,25 @@ posts('POST', ["create"], RequestContext) ->
             end,
             {redirect, io_lib:format("/p/~s", [SavedPost:slug()])}
     end;
+
+posts('GET', ["page", PageNumberStr], _RequestContext) ->
+    PageNumber = list_to_integer(PageNumberStr),
+    Offset = (PageNumber - 1) * ?POSTS_PER_PAGE,
+    Posts = boss_db:find(post, [],
+                               [{order_by, created_at},
+                                {descending, true},
+                                {limit, ?POSTS_PER_PAGE},
+                                {offset, Offset}]),
+    PostsCount = boss_db:count(post),
+    PreviousPage = PageNumber - 1,
+    NextPage = if
+                   PostsCount > (PageNumber * ?POSTS_PER_PAGE) ->
+                       PageNumber + 1;
+                   true ->
+                       undefined
+               end,
+    {ok, [{title, "Posts Admin"}, {posts, Posts}, {previous_page, PreviousPage},
+          {next_page, NextPage}]};
 
 posts('GET', [PostId], _RequestContext) ->
     case boss_db:find(PostId) of
