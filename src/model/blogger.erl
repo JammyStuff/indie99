@@ -1,4 +1,5 @@
 -module(blogger, [Id, Username::string(), PasswordHash::string(),
+                  EmailAddress::string(), TwitterUsername::string(),
                   CreatedAt::datetime(), UpdatedAt::datetime()]).
 -export([before_create/0, before_update/0, check_password/1, set_password/1,
          validation_tests/0]).
@@ -31,6 +32,24 @@ before_update() ->
 
 validation_tests() ->
     [
+        {fun() ->
+            if
+                is_list(EmailAddress) ->
+                    length(EmailAddress) =< 254;
+                true ->
+                    true
+            end
+         end,
+         "Email address can be up to 254 characters long"},
+        {fun() ->
+            if
+                is_list(TwitterUsername) ->
+                    length(TwitterUsername) =< 15;
+                true ->
+                    true
+            end
+         end,
+         "Twitter Username can be up to 15 characters long"},
         {fun() ->
             (length(Username) >= 1) and (length(Username) =< 30)
          end,
