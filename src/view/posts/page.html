@@ -1,6 +1,7 @@
 {% extends "layout/main.html" %}
 
 {% block content %}
+{% if posts %}
 {% for post in posts %}
 <article>
     <header class="row">
@@ -17,6 +18,13 @@
 </article>
 <hr>
 {% endfor %}
+{% else %}
+<div class="row">
+    <div class="col-md-12">
+        <p class="text-center">Nothing to see here</p>
+    </div>
+</div>
+{% endif %}
 
 <nav>
     <ul class="pager">
