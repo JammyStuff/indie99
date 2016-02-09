@@ -55,7 +55,12 @@ validation_tests() ->
          end,
          "Username must be between 1 and 30 characters long"},
         {fun() ->
-             boss_db:count(blogger, [username, equals, Username]) =:= 0
+            case Id of
+                id ->
+                    boss_db:count(blogger, [username, equals, Username]) =:= 0;
+                _ ->
+                    true
+            end
          end,
          "Username already taken"}
     ].

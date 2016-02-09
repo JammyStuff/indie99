@@ -1,0 +1,17 @@
+{% extends "layout/main.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h3>Let's secure your account. <small>Set-up two factor authentication.</small></h3>
+    </div>
+</div>
+
+<form method="post">
+    {{ csrf_token|safe }}
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" name="continue">Yes, keep me secure</button>
+        <button type="submit" class="btn btn-danger" name="skip">No, my middle name is danger</button>
+    </div>
+</form>
+{% endblock %}

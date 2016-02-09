@@ -3,15 +3,33 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h3>Let's secure your account. <small>Set-up two factor authentication.</small></h3>
+        <h3>Got web presence? <small>Brag about it!</small></h3>
     </div>
 </div>
 
 <form method="post">
+    {% if form_errors %}
+    {% for error in form_errors %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% endif %}
     {{ csrf_token|safe }}
     <div class="form-group">
-        <button type="submit" class="btn btn-primary" name="continue">Yes, keep me secure</button>
-        <button type="submit" class="btn btn-danger" name="skip">No, my middle name is danger</button>
+        What's your <label for="email-box">email address</label>?
+        <input type="email" class="form-control" id="email-box" placeholder="Email address" name="email_address">
+    </div>
+    <div class="form-group">
+        And what's your <label for="twitter-username-box">Twitter username</label>?
+        <div class="input-group">
+            <span class="input-group-addon">@</span>
+            <input type=="text" class="form-control" id="twitter-username-box" placeholder="Twitter username" name="twitter_username">
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-default">Let's go!</button>
     </div>
 </form>
 {% endblock %}

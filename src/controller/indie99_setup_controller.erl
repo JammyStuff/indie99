@@ -1,5 +1,5 @@
 -module(indie99_setup_controller, [Req, SessionID]).
--export([before_filters/2, step1/2, step2/2]).
+-export([before_filters/2, step1/2, step2/3]).
 
 step1('GET', []) ->
     case boss_db:count(blogger) of
@@ -33,7 +33,7 @@ step1('POST', []) ->
                                         BloggerWithPassword:save(),
                                     boss_session:set_session_data(SessionID,
                                         blogger, SavedBlogger:id()),
-                                    {redirect, "/"}
+                                    {redirect, "/setup/step2"}
                             end
                     end
             end;
@@ -41,11 +41,31 @@ step1('POST', []) ->
             not_found
     end.
 
-step2('GET', []) ->
-    not_found.
+step2('GET', [], _RequestContext) ->
+    {ok, [{title, "Setup"}]};
+
+step2('POST', [], RequestContext) ->
+    Blogger = proplists:get_value(blogger, RequestContext),
+    EmailAddress = Req:post_param("email_address"),
+    TwitterUsername = Req:post_param("twitter_username"),
+    UpdatedBlogger = Blogger:set([{email_address, EmailAddress},
+                                  {twitter_username, TwitterUsername}]),
+    case UpdatedBlogger:validate() of
+        {error, Errors} ->
+            ok_with_errors(Errors);
+        ok ->
+            {ok, SavedBlogger} = UpdatedBlogger:save(),
+            {redirect, "/"}
+    end.
 
 ok_with_errors(Errors) ->
     {ok, [{title, "Setup"}, {form_errors, Errors}]}.
 
-before_filters(DefaultFilters, _RequestContext) ->
-    DefaultFilters -- [setup_filter].
+before_filters(DefaultFilters, RequestContext) ->
+    Action = proplists:get_value(action, RequestContext),
+    case Action of
+        "step1" ->
+            DefaultFilters -- [setup_filter];
+        _ ->
+            DefaultFilters ++ [require_login_filter]
+    end.
