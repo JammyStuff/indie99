@@ -47,7 +47,8 @@
     {controller_filter_modules, [
         boss_csrf_filter,
         setup_filter,
-        blogger_filter
+        blogger_filter,
+        rel_me_filter
     ]},
 
 %    {controller_filter_config, [

@@ -51,6 +51,17 @@
         {% block content %}{% endblock %}
     </div>
 
+    <footer class="container">
+        <ul class="list-inline text-center">
+            {% if site_email_address %}
+            <li><a href="mailto:{{ site_email_address }}" rel="me"><span class="fa fa-envelope fa-2x"></span></a></li>
+            {% endif %}
+            {% if site_twitter_username %}
+            <li><a href="https://twitter.com/{{ site_twitter_username }}" rel="me"><span class="fa fa-twitter fa-2x"></span></a></li>
+            {% endif %}
+        </ul>
+    </footer>
+
     <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 </body>
