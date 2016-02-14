@@ -14,7 +14,11 @@
         <tr>
             <th scope="row"><a href="/admin/posts/{{ post.id }}">{{ post.id|as_id }}</a></th>
             <td><a href="/admin/posts/{{ post.id }}">{{ post.title }}</a></td>
+            {% if post.published_at %}
             <td><a href="/admin/posts/{{ post.id }}">{{ post.published_at|date:"l j F Y H:i" }}</a></td>
+            {% else %}
+            <td>―</td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>

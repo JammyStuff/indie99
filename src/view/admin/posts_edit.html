@@ -20,7 +20,12 @@
         <textarea class="form-control" id="content-box" placeholder="Content" name="content">{{ post.content }}</textarea>
     </div>
     <div class="form-group">
+        {% if post.published_at %}
         <button type="submit" class="btn btn-primary">Update</button>
+        {% else %}
+        <button type="submit" name="publish" value="publish" class="btn btn-primary">Publish</button>
+        <button type="submit" name="save" value="save" class="btn btn-default">Save</button>
+        {% endif %}
         <a class="btn btn-danger" href="/admin/posts/{{ post.id }}/delete">Delete Post</a>
     </div>
 </form>

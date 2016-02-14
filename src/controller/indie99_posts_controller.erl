@@ -6,12 +6,12 @@
 page('GET', [PageNumberStr]) ->
     PageNumber = list_to_integer(PageNumberStr),
     Offset = (PageNumber - 1) * ?POSTS_PER_PAGE,
-    Posts = boss_db:find(post, [],
+    Posts = boss_db:find(post, [{published_at, not_equals, undefined}],
                                [{order_by, published_at},
                                 {descending, true},
                                 {limit, ?POSTS_PER_PAGE},
                                 {offset, Offset}]),
-    PostsCount = boss_db:count(post),
+    PostsCount = boss_db:count(post, [{published_at, not_equals, undefined}]),
     PreviousPage = PageNumber - 1,
     NextPage = if
                    PostsCount > (PageNumber * ?POSTS_PER_PAGE) ->
@@ -23,7 +23,8 @@ page('GET', [PageNumberStr]) ->
           {next_page, NextPage}]}.
 
 view('GET', [PostSlug]) ->
-    case boss_db:find_first(post, [slug, equals, PostSlug]) of
+    case boss_db:find_first(post, [{slug, equals, PostSlug},
+                                   {published_at, not_equals, undefined}]) of
         undefined ->
             not_found;
         Post ->

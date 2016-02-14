@@ -6,6 +6,7 @@ CHANGELOG
 * Switch to HTTPS jQuery
 * Added h-card support
 * Added h-entry support
+* Added draft post functionality
 
 0.1.0
 -----

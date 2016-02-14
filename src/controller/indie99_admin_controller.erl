@@ -15,38 +15,51 @@ posts('GET', ["create"], RequestContext) ->
          {twitter_is_connected, TwitterIsConnected}]};
 
 posts('POST', ["create"], RequestContext) ->
+    Publish = Req:post_param("post") =:= "post",
     Blogger = proplists:get_value(blogger, RequestContext),
     Title = Req:post_param("title"),
     Content = Req:post_param("content"),
+    PublishedAt = case Publish of
+        true ->
+            erlang:universaltime();
+        false ->
+            undefined
+    end,
     Post = post:new(id, Title, Content, undefined, undefined, undefined,
-                    Blogger:id(), erlang:universaltime(), undefined, undefined),
-    case Post:validate() of
+                    Blogger:id(), PublishedAt, undefined, undefined),
+    case Post:save() of
         {error, Errors} ->
             {render_other, [{action, "posts_create"}],
                            [{title, "Create Post"}, {form_errors, Errors}]};
-        ok ->
-            {ok, SavedPost} = Post:save(),
-            PostUrl = io_lib:format("~s://~s/p/~s", [Req:protocol(),
-                Req:header(host), SavedPost:slug()]),
-            case Req:post_param("twitter") of
-                "twitter" ->
-                    %% Post to twitter
-                    TwitterToken = Blogger:twitter_token(),
-                    TwitterStatus = io_lib:format("~s ~s", [SavedPost:title(),
-                        PostUrl]),
-                    {TwitterStatusId, TwitterUsername} =
-                        twitter_client:post_status_update(
-                            twitter_client:get_credentials(),
-                            {TwitterToken:token(), TwitterToken:token_secret()},
-                            TwitterStatus),
-                    TweetedPost = SavedPost:set([
-                        {twitter_status_id, TwitterStatusId},
-                        {twitter_username, TwitterUsername}]),
-                    {ok, _} = TweetedPost:save();
-                _ ->
-                    ok
-            end,
-            {redirect, io_lib:format("/p/~s", [SavedPost:slug()])}
+        {ok, SavedPost} ->
+            case Publish of
+                true ->
+                    PostUrl = io_lib:format("~s://~s/p/~s", [Req:protocol(),
+                        Req:header(host), SavedPost:slug()]),
+                    case Req:post_param("twitter") of
+                        "twitter" ->
+                            %% Post to twitter
+                            TwitterToken = Blogger:twitter_token(),
+                            TwitterStatus = io_lib:format("~s ~s", [
+                                SavedPost:title(), PostUrl]),
+                            {TwitterStatusId, TwitterUsername} =
+                                twitter_client:post_status_update(
+                                    twitter_client:get_credentials(),
+                                    {TwitterToken:token(),
+                                    TwitterToken:token_secret()},
+                                    TwitterStatus),
+                            TweetedPost = SavedPost:set([
+                                {twitter_status_id, TwitterStatusId},
+                                {twitter_username, TwitterUsername}]),
+                            {ok, _} = TweetedPost:save();
+                        _ ->
+                            ok
+                    end,
+                    {redirect, io_lib:format("/p/~s", [SavedPost:slug()])};
+                false ->
+                    {redirect, io_lib:format("/admin/posts/~s/preview",
+                        [SavedPost:id()])}
+            end
     end;
 
 posts('GET', ["page", PageNumberStr], _RequestContext) ->
@@ -78,20 +91,33 @@ posts('GET', [PostId], _RequestContext) ->
     end;
 
 posts('POST', [PostId], _RequestContext) ->
+    Publish = Req:post_param("publish") =:= "publish",
     Title = Req:post_param("title"),
     Content = Req:post_param("content"),
     case boss_db:find(PostId) of
         Post when element(1, Post) =:= post ->
-            UpdatedPost = Post:set([{title, Title}, {content, Content}]),
-            case UpdatedPost:validate() of
+            UpdatedPost = case Publish of
+                true ->
+                    Post:set([{title, Title}, {content, Content},
+                              {published_at, erlang:universaltime()}]);
+                false ->
+                    Post:set([{title, Title}, {content, Content}])
+            end,
+            case UpdatedPost:save() of
                 {error, Errors} ->
                     {render_other, [{action, "posts_edit"}],
                                    [{title, "Edit Post"},
                                     {post, Post},
                                     {form_errors, Errors}]};
-                ok ->
-                    {ok, SavedPost} = Post:save(),
-                    {redirect, io_lib:format("/p/~s", [SavedPost:slug()])}
+                {ok, SavedPost} ->
+                    case SavedPost:published_at() of
+                        undefined ->
+                            {redirect, io_lib:format("/admin/posts/~s/preview",
+                                [SavedPost:id()])};
+                        _ ->
+                            {redirect, io_lib:format("/p/~s",
+                                [SavedPost:slug()])}
+                    end
             end;
         _ ->
             not_found
@@ -111,6 +137,15 @@ posts('POST', [PostId, "delete"], _RequestContext) ->
         Post when element(1, Post) =:= post ->
             ok = boss_db:delete(PostId),
             {redirect, "/admin/posts"};
+        _ ->
+            not_found
+    end;
+
+posts('GET', [PostId, "preview"], _RequestContext) ->
+    case boss_db:find(PostId) of
+        Post when element(1, Post) =:= post ->
+            {render_other, [{controller, "posts"}, {action, "view"}],
+                [{title, "Preview Post"}, {post, Post}]};
         _ ->
             not_found
     end.
