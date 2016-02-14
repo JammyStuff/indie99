@@ -38,20 +38,8 @@ posts('POST', ["create"], RequestContext) ->
                         Req:header(host), SavedPost:slug()]),
                     case Req:post_param("twitter") of
                         "twitter" ->
-                            %% Post to twitter
-                            TwitterToken = Blogger:twitter_token(),
-                            TwitterStatus = io_lib:format("~s ~s", [
-                                SavedPost:title(), PostUrl]),
-                            {TwitterStatusId, TwitterUsername} =
-                                twitter_client:post_status_update(
-                                    twitter_client:get_credentials(),
-                                    {TwitterToken:token(),
-                                    TwitterToken:token_secret()},
-                                    TwitterStatus),
-                            TweetedPost = SavedPost:set([
-                                {twitter_status_id, TwitterStatusId},
-                                {twitter_username, TwitterUsername}]),
-                            {ok, _} = TweetedPost:save();
+                            posse_post(Blogger, SavedPost, PostUrl,
+                                       [{twitter, true}]);
                         _ ->
                             ok
                     end,
@@ -81,16 +69,21 @@ posts('GET', ["page", PageNumberStr], _RequestContext) ->
     {ok, [{title, "Posts Admin"}, {posts, Posts}, {previous_page, PreviousPage},
           {next_page, NextPage}]};
 
-posts('GET', [PostId], _RequestContext) ->
+posts('GET', [PostId], RequestContext) ->
+    Blogger = proplists:get_value(blogger, RequestContext),
+    TwitterIsConnected = (twitter_client:is_enabled()) and
+        (Blogger:twitter_token() =/= undefined),
     case boss_db:find(PostId) of
         Post when element(1, Post) =:= post ->
             {render_other, [{action, "posts_edit"}],
-                           [{title, "Edit Post"}, {post, Post}]};
+                           [{title, "Edit Post"}, {post, Post},
+                            {twitter_is_connected, TwitterIsConnected}]};
         _ ->
             not_found
     end;
 
-posts('POST', [PostId], _RequestContext) ->
+posts('POST', [PostId], RequestContext) ->
+    Blogger = proplists:get_value(blogger, RequestContext),
     Publish = Req:post_param("publish") =:= "publish",
     Title = Req:post_param("title"),
     Content = Req:post_param("content"),
@@ -115,6 +108,11 @@ posts('POST', [PostId], _RequestContext) ->
                             {redirect, io_lib:format("/admin/posts/~s/preview",
                                 [SavedPost:id()])};
                         _ ->
+                            PostUrl = io_lib:format("~s://~s/p/~s", [
+                                Req:protocol(), Req:header(host),
+                                SavedPost:slug()]),
+                            posse_post(Blogger, SavedPost, PostUrl,
+                                       [{twitter, true}]),
                             {redirect, io_lib:format("/p/~s",
                                 [SavedPost:slug()])}
                     end
@@ -221,6 +219,26 @@ services('POST', ["twitter", "disconnect"], RequestContext) ->
             boss_db:delete(TwitterToken:id())
     end,
     {redirect, "/admin/services/twitter"}.
+
+posse_post(Blogger, Post, PostUrl, Services) ->
+    case proplists:get_value(twitter, Services) of
+        true ->
+            TwitterToken = Blogger:twitter_token(),
+            TwitterStatus = io_lib:format("~s ~s", [Post:title(), PostUrl]),
+            {TwitterStatusId, TwitterUsername} =
+                twitter_client:post_status_update(
+                    twitter_client:get_credentials(),
+                    {TwitterToken:token(), TwitterToken:token_secret()},
+                    TwitterStatus
+                ),
+            TweetedPost = Post:set([
+                {twitter_status_id, TwitterStatusId},
+                {twitter_username, TwitterUsername}]),
+            {ok, TwitterPost} = TweetedPost:save(),
+            TwitterPost;
+        _ ->
+            Post
+    end.
 
 before_filters(DefaultFilters, _RequestContext) ->
     DefaultFilters ++ [require_login_filter].

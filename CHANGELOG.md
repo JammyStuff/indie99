@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+0.3.0
+-----
+* Allow POSSE for existing posts
+
 0.2.0
 -----
 * Switch to HTTPS jQuery
