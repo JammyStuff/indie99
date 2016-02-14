@@ -52,15 +52,20 @@
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="container">
+    <footer class="container h-card">
         <ul class="list-inline text-center">
             {% if site_email_address %}
-            <li><a href="mailto:{{ site_email_address }}" rel="me"><span class="fa fa-envelope fa-2x"></span></a></li>
+            <li><a href="mailto:{{ site_email_address }}" rel="me" class="u-email"><span class="fa fa-envelope fa-2x"></span></a></li>
             {% endif %}
             {% if site_twitter_username %}
             <li><a href="https://twitter.com/{{ site_twitter_username }}" rel="me"><span class="fa fa-twitter fa-2x"></span></a></li>
             {% endif %}
         </ul>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <small>&copy; <a href="/" rel="me" class="u-url">{% if site_full_name %}<span class="p-name">{{ site_full_name }}</span> - {% endif %}<span class="p-nickname">{{ site_username }}</span></a></small>
+            </div>
+        </div>
     </footer>
 
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
