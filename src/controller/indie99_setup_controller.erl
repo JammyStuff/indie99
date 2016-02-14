@@ -20,7 +20,7 @@ step1('POST', []) ->
                     ok_with_errors(["Password did not match confirmation"]);
                 true ->
                     Blogger = blogger:new(id, Username, undefined, undefined,
-                                          undefined, undefined, undefined),
+                        undefined, undefined, undefined, undefined),
                     case Blogger:set_password(Password) of
                         {error, Errors} ->
                             ok_with_errors(Errors);

@@ -10,6 +10,8 @@ blogger_test_() ->
          ?_test(fun_set_password())},
         {"Validations for Email Address",
          ?_test(val_email_address())},
+        {"Validations for Full Name",
+         ?_test(val_full_name())},
         {"Validations for Twitter Username",
          ?_test(val_twitter_username())},
         {"Validations for Username",
@@ -48,6 +50,20 @@ val_email_address() ->
     ?assertEqual({error, ["Email address can be up to 254 characters long"]},
         TooLongBlogger:validate()).
 
+val_full_name() ->
+    OkBlogger = create_blogger([
+        {full_name, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabc" ++
+                    "defghijklmnopqrstuvwxyzabcdefghijklmnopqrstuv"}
+    ]),
+    ?assertEqual(ok, OkBlogger:validate()),
+    TooLongBlogger = create_blogger([
+        {full_name, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabc" ++
+                    "defghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvw"}
+    ]),
+    ?assertEqual(101, length(TooLongBlogger:full_name())),
+    ?assertEqual({error, ["Full name can be up to 100 characters long"]},
+        TooLongBlogger:validate()).
+
 val_twitter_username() ->
     OkBlogger = create_blogger([{twitter_username, "TwitterUsername"}]),
     ?assertEqual(ok, OkBlogger:validate()),
@@ -75,7 +91,7 @@ val_username() ->
 create_blogger() ->
     blogger:new(id, "Username",
                 "$2a$12$.Thg9f90gPSFkmTR6JDcVeG0/mg8BYte8q92v6PcEFMCe0cfcR1/C",
-                undefined, undefined, undefined, undefined).
+                undefined, undefined, undefined, undefined, undefined).
 
 create_blogger(AttrVals) ->
     Blogger = create_blogger(),
