@@ -1,5 +1,5 @@
 -module(indie99_admin_controller, [Req, SessionID]).
--export([before_filters/2, posts/3, services/3]).
+-export([before_filters/2, posts/3, profile/3, services/3]).
 
 -define(POSTS_PER_PAGE, 10).
 
@@ -113,6 +113,29 @@ posts('POST', [PostId, "delete"], _RequestContext) ->
             {redirect, "/admin/posts"};
         _ ->
             not_found
+    end.
+
+profile('GET', [], RequestContext) ->
+    Blogger = proplists:get_value(blogger, RequestContext),
+    {ok, [{title, "Profile Admin"}, {form_blogger, Blogger}]};
+
+profile('POST', [], RequestContext) ->
+    Blogger = proplists:get_value(blogger, RequestContext),
+    FullName = Req:post_param("full_name"),
+    EmailAddress = Req:post_param("email_address"),
+    TwitterUsername = Req:post_param("twitter_username"),
+    UpdatedBlogger = Blogger:set([
+        {full_name, FullName},
+        {email_address, EmailAddress},
+        {twitter_username, TwitterUsername}
+    ]),
+    case UpdatedBlogger:save() of
+        {ok, SavedBlogger} ->
+            {ok, [{title, "Profile Admin"}, {form_blogger, SavedBlogger},
+                  {updated, true}]};
+        {error, Errors} ->
+            {ok, [{title, "Profile Admin"}, {form_blogger, UpdatedBlogger},
+                   {form_errors, Errors}]}
     end.
 
 services('GET', [], _RequestContext) ->

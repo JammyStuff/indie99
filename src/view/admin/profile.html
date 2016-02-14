@@ -1,0 +1,39 @@
+{% extends "layout/main.html" %}
+
+{% block content %}
+<form method="post">
+    {% if form_errors %}
+    {% for error in form_errors %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% if updated %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Profile updated successfully
+    </div>
+    {% endif %}
+    {{ csrf_token|safe }}
+    <div class="form-group">
+        <label for="full-name-box">Full Name</label>
+        <input type="text" class="form-control" id="full-name-box" placeholder="Full Name" name="full_name" value="{{ form_blogger.full_name }}">
+    </div>
+    <div class="form-group">
+        <label for="email-address-box">Email Address</label>
+        <input type="text" class="form-control" id="email-address-box" placeholder="Email Address" name="email_address" value="{{ form_blogger.email_address }}">
+    </div>
+    <div class="form-group">
+        <label for="twitter-username-box">Twitter Username</label>
+        <div class="input-group">
+            <span class="input-group-addon">@</span>
+            <input type=="text" class="form-control" id="twitter-username-box" placeholder="Twitter Username" name="twitter_username" value="{{ form_blogger.twitter_username }}">
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+</form>
+{% endblock %}
