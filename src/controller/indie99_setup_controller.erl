@@ -13,13 +13,14 @@ step1('POST', []) ->
     case boss_db:count(blogger) of
         0 ->
             Username = Req:post_param("username"),
+            FullName = Req:post_param("full_name"),
             Password = Req:post_param("password"),
             PasswordConfirmation = Req:post_param("password_confirmation"),
             if
                 Password =/= PasswordConfirmation ->
                     ok_with_errors(["Password did not match confirmation"]);
                 true ->
-                    Blogger = blogger:new(id, Username, undefined, undefined,
+                    Blogger = blogger:new(id, Username, undefined, FullName,
                         undefined, undefined, undefined, undefined),
                     case Blogger:set_password(Password) of
                         {error, Errors} ->
