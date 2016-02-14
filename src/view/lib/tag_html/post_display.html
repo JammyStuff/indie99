@@ -1,0 +1,15 @@
+<article class="h-entry">
+    <header class="row">
+        <div class="col-md-12">
+            <h1><a href="/p/{{ post.slug }}" class="p-name u-url">{{ post.title }}</a></h1>
+            <h3><small>Posted by <span class="p-author">{% if post.blogger.full_name %}{{ post.blogger.full_name }}{% else %}{{ post.blogger.username }}{% endif %}</span>
+            | <time datetime="{{ post.published_at|date:"c" }}" class="dt-published">{{ post.published_at|date:"l j F Y H:i" }}</time>
+            {% if post.twitter_status_id %} | <a href="https://twitter.com/{{ post.twitter_username }}/status/{{ post.twitter_status_id }}" class="u-syndication"><span class="fa fa-twitter"></span></a>{% endif %}</small></h3>
+        </div>
+    </header>
+    <div class="row">
+        <div class="col-md-12" class="e-content">
+            {{ post.content|markdown|safe }}
+        </div>
+    </div>
+</article>

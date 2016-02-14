@@ -5,6 +5,7 @@ CHANGELOG
 -----
 * Switch to HTTPS jQuery
 * Added h-card support
+* Added h-entry support
 
 0.1.0
 -----
