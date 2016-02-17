@@ -5,6 +5,8 @@
 
 -belongs_to(blogger).
 
+-has({posts, many, [{foreign_key, "image_id"}]}).
+
 -define(ALLOWED_TYPES, ["image", "other"]).
 
 before_create() ->

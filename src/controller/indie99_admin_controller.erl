@@ -26,7 +26,7 @@ posts('POST', ["create"], RequestContext) ->
             undefined
     end,
     Post = post:new(id, Title, Content, undefined, undefined, undefined,
-                    Blogger:id(), PublishedAt, undefined, undefined),
+                    Blogger:id(), undefined, PublishedAt, undefined, undefined),
     case Post:save() of
         {error, Errors} ->
             {render_other, [{action, "posts_create"}],
