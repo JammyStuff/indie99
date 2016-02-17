@@ -3,4 +3,6 @@
 deps/
 ebin/
 log/
+priv/static/uploads/
+scratch/
 boss.config

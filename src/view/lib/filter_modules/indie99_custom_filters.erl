@@ -14,3 +14,6 @@ as_id(Value) ->
 
 markdown(Value) ->
     markdown:conv_utf8(Value).
+
+upload_path_to_url(Value) ->
+    re:replace(Value, "^\\./priv", "", [{return, list}]).

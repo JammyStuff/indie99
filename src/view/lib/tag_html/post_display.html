@@ -7,9 +7,18 @@
             {% if post.twitter_status_id %} | <a href="https://twitter.com/{{ post.twitter_username }}/status/{{ post.twitter_status_id }}" class="u-syndication"><span class="fa fa-twitter"></span></a>{% endif %}</small></h3>
         </div>
     </header>
+    {% if post.image_id %}
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{{ post.image.path|upload_path_to_url }}"><img class="u-photo img-responsive center-block" src="{{ post.image.path|upload_path_to_url }}"></a>
+        </div>
+    </div>
+    {% endif %}
+    {% if post.content %}
     <div class="row">
         <div class="col-md-12 e-content">
             {{ post.content|markdown|safe }}
         </div>
     </div>
+    {% endif %}
 </article>

@@ -25,8 +25,14 @@ posts('POST', ["create"], RequestContext) ->
         false ->
             undefined
     end,
+    ImageId = case handle_image(Req:post_files(), Blogger) of
+        {ok, undefined} ->
+            undefined;
+        {ok, UploadedImage} ->
+            UploadedImage:id()
+    end,
     Post = post:new(id, Title, Content, undefined, undefined, undefined,
-                    Blogger:id(), undefined, PublishedAt, undefined, undefined),
+                    Blogger:id(), ImageId, PublishedAt, undefined, undefined),
     case Post:save() of
         {error, Errors} ->
             {render_other, [{action, "posts_create"}],
@@ -219,6 +225,23 @@ services('POST', ["twitter", "disconnect"], RequestContext) ->
             boss_db:delete(TwitterToken:id())
     end,
     {redirect, "/admin/services/twitter"}.
+
+handle_image(Files, Blogger) ->
+    Images = lists:filter(fun(F) ->
+        sb_uploaded_file:field_name(F) =:= "image"
+    end, Files),
+    case length(Images) of
+        0 ->
+            {ok, undefined};
+        1 ->
+            [Image] = Images,
+            Source = sb_uploaded_file:temp_file(Image),
+            OriginalName = sb_uploaded_file:original_name(Image),
+            uploaded_file_lib:handle_image_upload(Source, OriginalName,
+                                                  Blogger);
+        _ ->
+            {error, ["Can only handle one image upload"]}
+    end.
 
 posse_post(Blogger, Post, PostUrl, Services) ->
     case proplists:get_value(twitter, Services) of
