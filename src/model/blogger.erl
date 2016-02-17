@@ -7,6 +7,7 @@
 
 -has({posts, many}).
 -has({twitter_token, 1}).
+-has({uploaded_files, many}).
 
 check_password(Password) ->
     {ok, PasswordHash} =:= bcrypt:hashpw(Password, PasswordHash).
