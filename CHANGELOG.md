@@ -4,6 +4,7 @@ CHANGELOG
 0.3.0
 -----
 * Allow POSSE for existing posts
+* Allow image uploads
 
 0.2.0
 -----
