@@ -20,6 +20,13 @@
         <textarea class="form-control" id="content-box" placeholder="Content" name="content"></textarea>
     </div>
     <div class="form-group">
+        <label class="checkbox-inline">
+            <input type="checkbox" id="location-checkbox" name="include_location" value="yes"> <strong>Include your location?</strong>
+        </label>
+        <input type="hidden" id="latitude-box" name="latitude">
+        <input type="hidden" id="longitude-box" name="longitude">
+    </div>
+    <div class="form-group">
         <label for="image-selector">Image</lavel>
         <input type="file" class="form-control" id="image-selector" name="image">
     </div>
@@ -38,4 +45,8 @@
         <button type="submit" name="save" value="save" class="btn btn-default">Save</button>
     </div>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/loc.js"></script>
 {% endblock %}

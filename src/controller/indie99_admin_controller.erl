@@ -16,6 +16,7 @@ posts('GET', ["create"], RequestContext) ->
 
 posts('POST', ["create"], RequestContext) ->
     Publish = Req:post_param("post") =:= "post",
+    IncludeLocation = Req:post_param("include_location") =:= "yes",
     Blogger = proplists:get_value(blogger, RequestContext),
     Title = Req:post_param("title"),
     Content = Req:post_param("content"),
@@ -31,7 +32,29 @@ posts('POST', ["create"], RequestContext) ->
         {ok, UploadedImage} ->
             UploadedImage:id()
     end,
-    Post = post:new(id, Title, Content, undefined, undefined, undefined,
+    Latitude = case IncludeLocation of
+        true ->
+            case string:to_float(Req:post_param("latitude")) of
+                {error, _} ->
+                    undefined;
+                {Lat, _} ->
+                    Lat
+            end;
+        false ->
+            undefined
+    end,
+    Longitude = case IncludeLocation of
+        true ->
+            case string:to_float(Req:post_param("longitude")) of
+                {error, _} ->
+                    undefined;
+                {Lon, _} ->
+                    Lon
+            end;
+        false ->
+            undefined
+    end,
+    Post = post:new(id, Title, Content, undefined, Latitude, Longitude,
                     undefined, undefined, Blogger:id(), ImageId, PublishedAt,
                     undefined, undefined),
     case Post:save() of
