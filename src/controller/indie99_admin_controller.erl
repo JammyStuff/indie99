@@ -32,7 +32,8 @@ posts('POST', ["create"], RequestContext) ->
             UploadedImage:id()
     end,
     Post = post:new(id, Title, Content, undefined, undefined, undefined,
-                    Blogger:id(), ImageId, PublishedAt, undefined, undefined),
+                    undefined, undefined, Blogger:id(), ImageId, PublishedAt,
+                    undefined, undefined),
     case Post:save() of
         {error, Errors} ->
             {render_other, [{action, "posts_create"}],
