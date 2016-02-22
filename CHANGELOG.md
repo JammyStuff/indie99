@@ -5,6 +5,7 @@ CHANGELOG
 -----
 * Allow POSSE for existing posts
 * Allow image uploads
+* Add partial geolocation support
 
 0.2.0
 -----

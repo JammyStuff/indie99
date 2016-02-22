@@ -268,16 +268,31 @@ handle_image(Files, Blogger) ->
     end.
 
 posse_post(Blogger, Post, PostUrl, Services) ->
+    Latitude = Post:latitude(),
+    Longitude = Post:longitude(),
     case proplists:get_value(twitter, Services) of
         true ->
             TwitterToken = Blogger:twitter_token(),
             TwitterStatus = io_lib:format("~s ~s", [Post:title(), PostUrl]),
             {TwitterStatusId, TwitterUsername} =
-                twitter_client:post_status_update(
-                    twitter_client:get_credentials(),
-                    {TwitterToken:token(), TwitterToken:token_secret()},
-                    TwitterStatus
-                ),
+                if
+                    is_float(Latitude) and is_float(Longitude) ->
+                        LatitudeStr = float_to_list(Latitude, [{decimals, 15}]),
+                        LongitudeStr = float_to_list(Longitude,
+                                                     [{decimals, 15}]),
+                        twitter_client:post_status_update(
+                            twitter_client:get_credentials(),
+                            {TwitterToken:token(), TwitterToken:token_secret()},
+                            TwitterStatus,
+                            [{"lat", LatitudeStr}, {"long", LongitudeStr}]
+                        );
+                    true ->
+                        twitter_client:post_status_update(
+                            twitter_client:get_credentials(),
+                            {TwitterToken:token(), TwitterToken:token_secret()},
+                            TwitterStatus
+                        )
+                end,
             TweetedPost = Post:set([
                 {twitter_status_id, TwitterStatusId},
                 {twitter_username, TwitterUsername}]),

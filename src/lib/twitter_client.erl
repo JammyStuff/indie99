@@ -1,6 +1,7 @@
 -module(twitter_client).
 -export([get_access_token/3, get_authorize_url/1, get_credentials/0,
-         get_request_token/2, is_enabled/0, post_status_update/3]).
+         get_request_token/2, is_enabled/0, post_status_update/3,
+         post_status_update/4]).
 
 -define(ACCESS_TOKEN_URL, "https://api.twitter.com/oauth/access_token").
 -define(AUTHORIZE_URL, "https://api.twitter.com/oauth/authorize").
@@ -36,9 +37,15 @@ is_enabled() ->
     application:get_env(indie99, twitter_credentials) =/= undefined.
 
 post_status_update(Credentials, {AccessToken, AccessTokenSecret}, Status) ->
+    post_status_update(Credentials, {AccessToken, AccessTokenSecret}, Status,
+                       []).
+
+post_status_update(Credentials, {AccessToken, AccessTokenSecret}, Status,
+                   OtherParameters) ->
     FlatStatus = lists:flatten(Status),
-    {ok, Response} = oauth:post(?STATUS_UPDATE_URL, [{"status", FlatStatus}],
-        Credentials, AccessToken, AccessTokenSecret),
+    Parameters = [{"status", FlatStatus} | OtherParameters],
+    {ok, Response} = oauth:post(?STATUS_UPDATE_URL, Parameters, Credentials,
+                                AccessToken, AccessTokenSecret),
     {_, _, Body} = Response,
     {DecodedResponse} = jiffy:decode(Body),
     StatusId = proplists:get_value(<<"id_str">>, DecodedResponse),
