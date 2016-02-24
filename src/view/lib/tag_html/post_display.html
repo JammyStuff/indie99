@@ -10,7 +10,7 @@
     {% if post.image_id %}
     <div class="row">
         <div class="col-md-12">
-            <a href="{{ post.image.path|upload_path_to_url }}"><img class="u-photo img-responsive center-block" src="{{ post.image.path|upload_path_to_url }}"></a>
+            <a href="{{ post.image.path|upload_path_to_url }}"><img class="u-photo img-responsive center-block img-rotate" src="{{ post.image.path|upload_path_to_url }}"></a>
         </div>
     </div>
     {% endif %}
